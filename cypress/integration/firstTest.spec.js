@@ -42,7 +42,7 @@ describe("My first test suite", () => {
          cy.get('[data-cy="imputEmail1"]')
     })
 
-    it.only("its second test", () => {
+    it("its second test", () => {
 
         cy.visit('/');
         cy.contains("Forms").click()
@@ -62,11 +62,87 @@ describe("My first test suite", () => {
            .find("nb-checkbox")
            .click({force:true}) // use {force: true} for hidden CSS Property
 
-           /// cy.find("nb-checkbox") // should only be used for child elements
+           /// cy.find("nb-checkbox") // should only be used only for child elements inside parents
+          // cy.find('button' )
+        
+        cy.contains('nb-card','Horizontal form').find('[id="inputEmail3"]')
+        cy.contains('nb-card','Horizontal form').find('[id="inputPassword3"]','[type="password"]')
 
            
 
-           
+    })
+
+    it.only("then and wrap methods", () => {
+        cy.visit("/")
+        cy.contains("Forms").click()
+        cy.contains("Form Layouts").click()
+        
+        // // find the "Email" label from the form "Horizontal form"
+        // cy.contains("nb-card", "Horizontal form").find('[for="inputEmail3"]').should("contain", "Email")
+        // // find the "Password" label from the form "Horizontal form"
+        // cy.contains("nb-card", "Horizontal form").find('[for="inputPassword3"]').should("contain", "Password")
+        
+        // // find the "Email" label from the "Using the Grid"
+        // cy.contains("nb-card", "Using the Grid").find('[for="inputEmail1"]').should("contain", "Email")
+        // // find the "Passowrd" label from the "Using the Grid"
+        // cy.contains("nb-card", "Using the Grid").find('[for="inputPassword2"]').should("contain", "Password")
+
+        // // find the "Email address" label from the form "Basic form"
+        // cy.contains("nb-card", "Basic form").find('[for="exampleInputEmail1"]').should("contain", "Email address")
+        // // find the "Password" label from the form "Basic form"
+        // cy.contains("nb-card", "Basic form").find('[for="exampleInputPassword1"]').should("contain", "Password")
+
+        //-------------------Selenium style of defining object to reduce duplication---------------------
+        // const firstForm = cy.contains("nb-card", "Horizontal form")
+        // const secondForm = cy.contains("nb-card", "Using the Grid")
+        // const thirdForm = cy.contains("nb-card", "Basic form")
+
+        // firstForm.find('[for="inputEmail3"]').should("contain", "Email")
+        // secondForm.find('[for="inputEmail1"]').should("contain", "Email")
+        // thirdForm.find('[for="exampleInputEmail1"]').should("contain", "Email address")
+
+        //-------------Cypress then() jquery object & text() for assertion matching----------
+        cy.contains("nb-card", "Horizontal form").then( firstForm =>{
+            
+            // Jquery format
+            const emaillabelFirst = firstForm.find('[for="inputEmail3"]').text()
+            const passwordlabelFirst = firstForm.find('[for="inputPassword3"]').text()
+            // Assertion method expect() [chai library], used with jquery format like then()
+            expect(emaillabelFirst).to.equal("Email")
+            expect(passwordlabelFirst).to.equal("Password")
+
+
+            cy.contains("nb-card", "Using the Grid").then( secondForm => {
+               
+                //Jquery format
+                const emaillabelSecond = secondForm.find('[for="inputEmail1"]').text()
+                const passwordlabelSecond = secondForm.find('[for="inputPassword2"]').text()
+                // Assertion email label of first form is to equal to email label of second form
+                expect(emaillabelFirst).to.equal(emaillabelSecond)
+                // Assertion password label of first form is equal to password label of second form
+                expect(passwordlabelFirst).to.equal(passwordlabelSecond)
+
+                
+
+                cy.contains("nb-card", "Basic form").then( thirdForm => {
+                    const emaillabelThird = thirdForm.find('[for="exampleInputEmail1"]').text()
+                    //Assertion Email label of second form is equal to the email label of third form
+                    // expect(emaillabelSecond).equals(emaillabelThird)
+                    // ------Failed because Email != Email address-------------
+
+                    // to back convert Cypress format, use wrap() method
+                    cy. wrap(firstForm).find('[for="inputEmail3"]').should("contain", "Email")
+
+
+
+                })
+   
+            })
+            
+             
+
+        })
+
 
     })
 
