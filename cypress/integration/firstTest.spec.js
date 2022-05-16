@@ -1,6 +1,7 @@
 //used for intelisence & indicate cypress methods
 /// <reference types="cypress"/>  
 
+const { Input } = require("@angular/core")
 
 // context() or describe() both are same
 describe("My first test suite", () => {
@@ -72,7 +73,7 @@ describe("My first test suite", () => {
 
     })
 
-    it.only("then and wrap methods", () => {
+    it("then and wrap methods", () => {
         cy.visit("/")
         cy.contains("Forms").click()
         cy.contains("Form Layouts").click()
@@ -145,5 +146,100 @@ describe("My first test suite", () => {
 
 
     })
+    
+    it("Invoke command",() =>{
+        cy.visit("/")
+        cy.contains("Forms").click()
+        cy.contains("Form Layouts").click()
 
+        // Example #1:
+        cy.get('[for="exampleInputEmail1"]').should("contain","Email address")
+
+        // Example #2
+        cy.get('[for="exampleInputEmail1"]').then( label => {
+            expect(label.text()).to.equal("Email address")
+        })
+
+        // Example 3 How to get web element through invoke command
+        cy.get('[for="exampleInputEmail1"]').invoke('text').then( text => {
+            expect(text).to.equal('Email address')
+        })
+
+        cy.contains('nb-card', 'Basic form')
+            .find('nb-checkbox')
+            .click()
+            .find('.custom-checkbox') // use "." dot infront of it because its a class
+            .invoke('attr', 'class')
+            // .should('contain', 'checked')
+            .then(classvalue => {
+                expect(classvalue).to.contain('checked')
+            })
+    })
+
+    it("Assert property", () => {
+        cy.visit('/')
+        cy.contains('Forms').click()
+        // cy.contains('Form Layouts').click()
+        cy.contains('Datepicker').click()
+
+        cy.contains('nb-card', 'Common Datepicker')
+            .find('input').then(input =>{
+                cy.wrap(input).click({force:true})  // jquery param thats why we use "wrap()" instead of directly using click()
+                cy.get('nb-calendar-picker').contains('17').click()
+                cy.wrap(input).invoke('prop', 'value').should('contain', 'May 17, 2022')
+
+            })
+           
+
+
+    })
+
+    it("Radio Button", () => {
+       
+        cy.visit('/')
+        cy.contains('Forms').click()
+        cy.contains('Form Layouts').click()
+
+        cy.contains('nb-card','Using the Grid').find('[type="radio"]').then(radioButtons => {
+            cy.wrap(radioButtons)   
+               .first()
+               .check({force:true})  // checked first but when check second its unchecked
+               .should('be.checked')
+
+
+            cy.wrap(radioButtons)
+               .eq(1) //select element through index
+               .check({force:true}) // Check second but first unchecked
+               
+            cy.wrap(radioButtons)  // Verify that first radio button unchecked by checking second radio button
+                //.first() // use select first element 
+                .eq(0) // inplace of first(), we can use index(0)
+                .should('not.be.checked') // ---Passed---
+
+            cy.wrap(radioButtons) // Verify that the third radio button is disabled
+            .eq(2) // third index radio button
+            .should('be.disabled')  // ---Passed---
+
+            cy.wrap(radioButtons) // Verify that the third radio button is not disabled
+            .eq(2) // third index radio button
+            .should('not.be.disabled')  // ---Failed---
+
+        })
+    })
+
+    it.only("CheckBoxes", () => {
+
+        cy.visit('/')
+        cy.contains('Modal & Overlays').click()
+        cy.contains('Toastr').click()
+
+        cy.get('[type="checkbox"]').check({force:true}) //Check() method checked all the checkboxes if already checked then it don't uncheck
+         
+        // to uncheck the already check checkboxes we can use click()
+        cy.get('[type="checkbox"]').eq(0).click({force:true})
+        
+        //to check the second unchecked checkbox
+        cy.get('[type="checkbox"]').eq(1).check({force:true})
+
+    })
 })
