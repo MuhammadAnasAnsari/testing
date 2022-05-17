@@ -227,7 +227,7 @@ describe("My first test suite", () => {
         })
     })
 
-    it.only("CheckBoxes", () => {
+    it("CheckBoxes", () => {
 
         cy.visit('/')
         cy.contains('Modal & Overlays').click()
@@ -240,6 +240,98 @@ describe("My first test suite", () => {
         
         //to check the second unchecked checkbox
         cy.get('[type="checkbox"]').eq(1).check({force:true})
+
+    })
+
+    it("List and drop downs", () => {
+
+        cy.visit('/')
+         //-----------------------------Example #1:-------------------------------------
+        //Light, dropdown option 1------------------------
+        // cy.get('nav nb-select').click()
+        // cy.get('nb-option').eq(0).click() 
+        // cy.get('.options-list').contains("Light").click()  // use "." dot because its class value [other method]
+        // cy.get('nav nb-select').should('contain', "Light")  //Assertion
+        // cy.get('nb-layout-header nav').should('have.css','background-color', 'rgb(255, 255, 255)')  // to verify that the color change matches or not
+
+        //Dark , dropdown option 2----------------------
+        // cy.get('nb-option').eq(1).click() 
+        // cy.get('.options-list').contains("Dark").click()    // use "." dot because its class value [other method]
+        // cy.get('nav nb-select').should('contain', "Dark")  //Assertion
+        // cy.get('nb-layout-header nav').should('have.css','background-color', 'rgb(34, 43, 69)')  // to verify that the color change matches or not
+
+        //Cosmic, dropdown option 3-------------------------
+        // cy.get('nb-option').eq(2).click() 
+        // cy.get('.options-list').contains(" Cosmic").click()  // use "." dot because its class value [other method]
+        // cy.get('nav nb-select').should('contain', "Cosmic")  //Assertion
+        // cy.get('nb-layout-header nav').should('have.css','background-color', 'rgb(50, 50, 89)')  // to verify that the color change matches or not
+
+        //Corporate, dropdown option 4-----------------------
+        // cy.get('nb-option').eq(3).click() 
+        // cy.get('.options-list').contains(" Corporate").click() // use "." dot because its class value [other method]
+        // cy.get('nav nb-select').should('contain', "Corporate")  //Assertion
+        // cy.get('nb-layout-header nav').should('have.css','background-color', 'rgb(255, 255, 255)')  // to verify that the color change matches or not
+
+
+    //    --------------Example #2:To avoid above duplication of code==============
+       cy.get('nav nb-select').then(dropdown => {
+           cy.wrap(dropdown).click()
+           cy.get('.options-list nb-option').each( (listItem, index) => { //each() used for each drop down items, index for creating condition
+               const itemText = listItem.text().trim()   // use trim() to remove extra space into the string, text() to get item text
+
+            //    Json object for colors
+               const colors = {
+                   "Light": "rgb(255, 255, 255)",
+                   "Dark": "rgb(34, 43, 69)",
+                   "Cosmic": "rgb(50, 50, 89)",
+                   "Corporate": "rgb(255, 255, 255)"
+               }
+               
+               cy.wrap(listItem).click() // to click on listitem
+               cy.wrap(dropdown).should('contain', itemText)  //Assertion dropdown should contain itemText
+               cy.get('nb-layout-header nav').should('have.css','background-color', colors[itemText]) // Assertion, to check after clciking header BG color match or not
+               if(index <3){
+                cy.wrap(dropdown).click() // to click dropdown for iteration
+               }
+
+           })
+       })
+    
+    })
+
+    it.only("Web tables", () =>{
+        cy.visit('/')
+        cy.contains('Tables & Data').click()
+        cy.contains('Smart Table').click()
+     // Example 1: tbody = table body, tr = table row | How to update the table a row value and search the updated value
+        // cy.get('tbody').contains('tr','Larry').then(tableRow =>{
+        //     cy.wrap(tableRow).find('.nb-edit').click({force:true}) //use "." dot because its a class value
+        //     cy.wrap(tableRow).find('[placeholder="Age"]').clear().type('25') // clear(alrady entered value, & add/ type new value as '25')
+        //     cy.wrap(tableRow).find('.nb-checkmark').click({force:true}) // click on update/checkmar button
+            
+            // Way 1: find the table data cell by index eq() method ,Assertion, Verify that new updated value is '25'
+            // cy.wrap(tableRow).find('td').eq(6).should('contain', '25') 
+            // way 2: add custom web element locator
+             //...
+
+        // })
+      // Example 2: how to add new row/record with first & last names
+      
+      // way 1 to get the + Add button and click({force:true}) "{force:true}" for covered elements
+      //cy.get('.nb-plus').click({force:true})    
+      
+      // way 2 to get the + Add button through "thead" and click({force:true}) "{force:true}" for covered elements
+      cy.get('thead').find('.nb-plus').click({force:true}) 
+      
+      cy.get('td').find('[placeholder="First Name"]').type('Anas')
+      cy.get('td').find('[placeholder="Last Name"]').type('Ansari')
+      
+      
+      cy.get('tr').find('.nb-checkmark').click({force:true})
+      // Assertion | Verify that the added first name matches with the required first name 
+      cy.get('tr').find('td').eq(2).should('contain', 'Anas')
+      // Assertion | Verify that the added last name matches with the required last name 
+      cy.get('tr').find('td').eq(3).should('contain','Ansari')
 
     })
 })
