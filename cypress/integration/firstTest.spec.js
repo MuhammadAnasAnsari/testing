@@ -299,7 +299,7 @@ describe("My first test suite", () => {
     
     })
 
-    it.only("Web tables", () =>{
+    it("Web tables", () =>{
         cy.visit('/')
         cy.contains('Tables & Data').click()
         cy.contains('Smart Table').click()
@@ -315,23 +315,64 @@ describe("My first test suite", () => {
              //...
 
         // })
-      // Example 2: how to add new row/record with first & last names
+
+    // ------------------------------------------------------------------------------
+      // Example 2 [Way 1]: how to add new row/record with first & last names
       
-      // way 1 to get the + Add button and click({force:true}) "{force:true}" for covered elements
-      //cy.get('.nb-plus').click({force:true})    
+      // To get the + Add button and click({force:true}) "{force:true}" for covered elements
+    //   cy.get('.nb-plus').click({force:true})    
+    
+    //   cy.get('td').find('[placeholder="First Name"]').type('Anas')
+    //   cy.get('td').find('[placeholder="Last Name"]').type('Ansari')
       
-      // way 2 to get the + Add button through "thead" and click({force:true}) "{force:true}" for covered elements
+    //   cy.get('tr').find('.nb-checkmark').click({force:true})
+    //   // Assertion | Verify that the added first name matches with the required first name 
+    //   cy.get('tr').find('td').eq(2).should('contain', 'Anas')
+    //   // Assertion | Verify that the added last name matches with the required last name 
+    //   cy.get('tr').find('td').eq(3).should('contain','Ansari')
+    // -------------------------------------------------------------------
+
+    //  Example #2 [way 2]: how to add new row/record with first & last names
+      // Click on Add + record button
       cy.get('thead').find('.nb-plus').click({force:true}) 
-      
-      cy.get('td').find('[placeholder="First Name"]').type('Anas')
-      cy.get('td').find('[placeholder="Last Name"]').type('Ansari')
-      
-      
-      cy.get('tr').find('.nb-checkmark').click({force:true})
-      // Assertion | Verify that the added first name matches with the required first name 
-      cy.get('tr').find('td').eq(2).should('contain', 'Anas')
-      // Assertion | Verify that the added last name matches with the required last name 
-      cy.get('tr').find('td').eq(3).should('contain','Ansari')
+      // Enter a new record with First & Last Names
+      cy.get('thead').find('tr').eq(2).then( tableRow => {
+          cy.wrap(tableRow).find('[placeholder="First Name"]').type("Hassan")
+          cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Ali')
+          cy.wrap(tableRow).find('.nb-checkmark').click({force:true})
+      })
+      // Assertion | Verify/Match the entered First & Last Names
+      cy.get('tbody tr').find('td').then(tableColumns => {
+          cy.wrap(tableColumns).eq(2).should('contain', 'Hassan')
+          cy.wrap(tableColumns).eq(3).should('contain', 'Ali')
+      }) 
+    // Example #3 [way 1] ------------------
+      // Filter Table results by 'Age'
+    //   cy.get('thead [placeholder="Age"]').type('20')
+     // Add wait of half second for table results to be filtered & visible 
+    //   cy.wait(500)
+      // Assertion | find all the table rows that have Age = 20 index eq(6)
+    //   cy.get('tbody tr').each(tableRows => {
+        //   cy.wrap(tableRows).find('td').eq(6).should('contain','20')
+    //   })
+    // Example #3 [way 2] ..................
+    const age = [20, 30, 40, 200]
+    cy.wrap(age).each(age => {
+        cy.get('thead [placeholder="Age"]').clear().type(age)
+
+       cy.wait(500)
+
+       cy.get('tbody tr').each(tableRows =>{
+           if(age == 200){
+              cy.wrap(tableRows).should('contain', 'No data found')
+           }
+           else {
+            cy.wrap(tableRows).find('td').eq(6).should('contain', age)
+           }
+          
+       })
+
+    })
 
     })
 })
