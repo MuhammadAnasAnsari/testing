@@ -377,7 +377,7 @@ describe("My first test suite", () => {
 
     })
 
-    it.only("Web Datepickers", () => {
+    it("Web Datepickers", () => {
         // recursive function declaration  
         function selectDayfromCurrent(day){
 
@@ -419,5 +419,48 @@ describe("My first test suite", () => {
 
         })
 
+    })
+
+    it("tooltip", () =>{
+       cy.visit('/')
+       cy.contains('Modal & Overlays').click()
+       cy.contains('Tooltip').click()
+
+       cy.contains('nb-card', 'Colored Tooltips')
+          .contains('Default').click({force:true})
+       // to get the tooltip we have to inspect it through cypress runner window
+       cy.get('nb-tooltip').should('contain', 'This is a tooltip') //Assertion
+
+
+    })
+
+    it("Dialog", ()=>{
+        cy.visit('/')
+        cy.contains('Tables & Data').click()
+       cy.contains('Smart Table').click()
+
+       //cy.get('tbody tr td').find('.nb-trash').eq(0).click({force:true})
+       // Example 1
+    //    cy.get('tbody tr').first().find('.nb-trash').click({force:true})
+    //    cy.on('window:confirm', (confirm) =>{     // confirm window visible, if it runs then second statement will execute
+    //        expect(confirm).to.equal('Are you sure you want to delete?')
+    //    })
+
+       // Example 2
+    //    const stub = cy.stub()
+    //    cy.on('window:confirm', stub)
+    //     cy.get('tbody tr').first().find('.nb-trash').click({force:true}).then(()=>{   
+    //        expect(stub.getCall(0)).to.be.calledWith('Are you sure you want to delete?')
+    //    })
+
+       // Example 3 // not to confirm automatically [trash button will not delete record]
+       cy.get('tbody tr').first().find('.nb-trash').click({force:true})
+       cy.on('window:confirm', () => false)
+
+    })
+
+    it.only("Assertions", ()=>{
+
+        //chai library, chai query, BDD, TDD assertions https://docs.cypress.io/guides/references/assertions
     })
 })
