@@ -434,7 +434,7 @@ describe("My first test suite", () => {
 
     })
 
-    it("Dialog", ()=>{
+    it("Dialog box", ()=>{
         cy.visit('/')
         cy.contains('Tables & Data').click()
        cy.contains('Smart Table').click()
@@ -460,7 +460,39 @@ describe("My first test suite", () => {
     })
 
     it.only("Assertions", ()=>{
-
+        cy.visit('/')
+        cy.contains('Forms').click()
+        cy.contains('Form Layouts').click()
         //chai library, chai query, BDD, TDD assertions https://docs.cypress.io/guides/references/assertions
+        //1
+        cy.get('[for="exampleInputEmail1"]')
+           .should('contain', 'Email address') //1 contains text always
+           .should('have.class', 'label') // have.class
+           .and('have.text', 'Email address') //2 have.text
+         
+        //2
+        cy.get('[for="exampleInputEmail1"]').then( label => {
+            expect(label.text()).to.equal("Email address")  //1 .text()
+            expect(label).to.have.class('label')
+            expect(label).to.have.text('Email address')   //2 to.have.text
+        })
+
+        //3
+        cy.visit('/')
+        cy.contains('Forms').click()
+        cy.contains('Datepicker').click()
+
+        cy.contains('nb-card', 'Common Datepicker')
+            .find('input').then(input =>{
+                cy.wrap(input).click({force:true})  // jquery param thats why we use "wrap()" instead of directly using click()
+                cy.get('nb-calendar-picker').find('nb-calendar-day-cell').contains('23').click() // will work with current date value
+                cy.wrap(input).invoke('prop', 'value').should('contain', 'May 23, 2022') // will work with current date value
+                cy.wrap(input).should('have.value', 'May 23, 2022')  // will work with current date value
+
+            })
+
+
+
+
     })
 })
