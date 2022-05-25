@@ -23,3 +23,9 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+   
+// Define Method for opening the App Home Page |  cypress commmands: https://docs.cypress.io/api/cypress-api/custom-commands#Syntax
+Cypress.Commands.add('openHomePage', () =>{
+    cy.visit('/')
+})
+  

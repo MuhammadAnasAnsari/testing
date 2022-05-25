@@ -412,11 +412,10 @@ describe("My first test suite", () => {
         cy.contains('nb-card', 'Common Datepicker').find('input').then(input =>{
             cy.wrap(input).click({force:true})  // To click on Common datepicker input field
 
-        let dateAssert = selectDayfromCurrent(5) //Function call        
-              
+        let dateAssert = selectDayfromCurrent(5) //Function call           
 
         cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert)
-
+        cy.wrap(input).should('have.value'. dateAssert)
         })
 
     })
