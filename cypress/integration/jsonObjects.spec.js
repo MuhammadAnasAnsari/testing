@@ -25,6 +25,10 @@ describe("Json objects", ()=>{
                {
                    "firstName": "Bruce",
                    "lastName": "Lee"
+               },
+               {
+                  "firstName": "Anamta",
+                  "lastName": "Ali"
                }
             ]
 
